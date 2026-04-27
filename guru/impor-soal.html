@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EXALAB - Impor Soal</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f1f5f9; color: #1e293b; display: flex; min-height: 100vh; }
+        .sidebar { width: 260px; background: #0f172a; color: white; padding: 20px; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; overflow-y: auto; }
+        .sidebar-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #1e293b; }
+        .sidebar-logo .logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg, #4f46e5, #7c3aed); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; }
+        .sidebar-logo h2 { font-size: 18px; font-weight: 700; }
+        .sidebar-logo span { font-size: 11px; color: #fbbf24; display: block; }
+        .sidebar-section { margin-bottom: 20px; }
+        .sidebar-section h3 { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: #64748b; margin-bottom: 10px; padding-left: 8px; }
+        .sidebar a { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; color: #cbd5e1; text-decoration: none; font-size: 13px; font-weight: 500; transition: all 0.2s; margin-bottom: 2px; }
+        .sidebar a:hover { background: #1e293b; color: white; }
+        .sidebar a.active { background: #1e293b; color: white; border-left: 3px solid #4f46e5; }
+        .sidebar-footer { margin-top: auto; padding-top: 16px; border-top: 1px solid #1e293b; }
+        .sidebar-footer a { color: #94a3b8; font-size: 12px; display: block; padding: 6px 0; }
+
+        .main-content { margin-left: 260px; padding: 24px; flex: 1; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .top-bar h1 { font-size: 24px; font-weight: 800; }
+        .breadcrumb { font-size: 13px; color: #64748b; }
+        .breadcrumb a { color: #4f46e5; text-decoration: none; }
+        .user-info { display: flex; align-items: center; gap: 10px; background: white; padding: 8px 16px; border-radius: 30px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+        .user-avatar { width: 36px; height: 36px; background: #c7d2fe; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #3730a3; font-size: 14px; }
+        .user-name { font-weight: 600; font-size: 14px; }
+        .user-role { font-size: 11px; color: #64748b; }
+
+        .panel { background: white; border-radius: 12px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+        .import-zone { border: 3px dashed #e2e8f0; border-radius: 16px; padding: 50px; text-align: center; cursor: pointer; transition: all 0.2s; margin-bottom: 20px; }
+        .import-zone:hover { border-color: #4f46e5; background: #eef2ff; }
+        .import-icon { font-size: 56px; margin-bottom: 12px; }
+
+        .btn { padding: 10px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; }
+        .btn-outline { background: white; color: #4f46e5; border: 1px solid #4f46e5; }
+        .demo-label { display: inline-block; background: #fbbf24; color: #000; padding: 3px 10px; border-radius: 12px; font-size: 10px; font-weight: 700; margin-left: 8px; }
+
+        @media (max-width: 768px) { .sidebar { width: 200px; } .main-content { margin-left: 200px; } }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-logo"><div class="logo-icon">E</div><div><h2>EXALAB</h2><span>Guru Panel</span></div></div>
+        <div class="sidebar-section"><h3>Menu Utama</h3>
+            <a href="dashboard.html"><span class="icon">📊</span> Dashboard</a>
+            <a href="bank-soal.html"><span class="icon">📁</span> Bank Soal</a>
+            <a href="form-builder.html"><span class="icon">📝</span> Buat Soal</a>
+            <a href="impor-soal.html" class="active"><span class="icon">📥</span> Impor Soal</a>
+            <a href="sharing-soal.html"><span class="icon">🔄</span> Sharing Soal</a>
+        </div>
+        <div class="sidebar-section"><h3>Ujian</h3>
+            <a href="buat-ujian.html"><span class="icon">📋</span> Buat Ujian</a>
+            <a href="publikasi-ujian.html"><span class="icon">🔢</span> Publikasi</a>
+            <a href="monitoring-ujian.html"><span class="icon">👁️</span> Monitoring</a>
+            <a href="hasil-ujian.html"><span class="icon">📈</span> Hasil Ujian</a>
+        </div>
+        <div class="sidebar-footer"><a href="../login.html">🚪 Logout</a><a href="../index.html" style="font-size:10px;">← Kembali ke Home</a></div>
+    </aside>
+
+    <main class="main-content">
+        <div class="top-bar">
+            <div><h1>📥 Impor Soal <span class="demo-label">DEMO</span></h1><p class="breadcrumb"><a href="dashboard.html">Dashboard</a> / Impor Soal</p></div>
+            <div class="user-info"><div class="user-avatar">AL</div><div><div class="user-name">Ani Lestari, S.Pd.</div><div class="user-role">Guru IPA - SMP</div></div></div>
+        </div>
+
+        <div class="panel">
+            <button class="btn btn-outline" style="margin-bottom:20px;">📥 Download Template Excel</button>
+            <div class="import-zone" onclick="alert('🔶 Demo: Pilih file Excel (.xlsx)')">
+                <div class="import-icon">📂</div>
+                <p style="font-weight:600;">Klik untuk pilih file atau drag & drop di sini</p>
+                <p style="font-size:12px;color:#94a3b8;">Format: .xlsx, .csv (Maks 5MB)</p>
+            </div>
+            <p style="font-size:12px;color:#64748b;">✅ Template Excel memiliki format: Tipe Soal | Pertanyaan | Opsi A-D | Kunci Jawaban | Mapel | Kelas</p>
+        </div>
+    </main>
+
+</body>
+</html>
