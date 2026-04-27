@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EXALAB - Konfirmasi Ujian</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f1f5f9; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+
+        .container { width: 100%; max-width: 440px; }
+        .card { background: white; border-radius: 20px; padding: 32px 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.06); }
+
+        .back-link { font-size: 13px; color: #64748b; text-decoration: none; margin-bottom: 20px; display: inline-block; }
+        .back-link:hover { color: #4f46e5; }
+
+        .header { text-align: center; margin-bottom: 24px; }
+        .header .icon { font-size: 48px; margin-bottom: 8px; }
+        .header h1 { font-size: 20px; font-weight: 800; color: #1e293b; margin-bottom: 4px; }
+        .header .kode { font-size: 12px; color: #64748b; background: #f1f5f9; padding: 4px 10px; border-radius: 10px; }
+
+        .info-grid { background: #f8fafc; border-radius: 12px; padding: 16px; margin-bottom: 20px; }
+        .info-row { display: flex; justify-content: space-between; padding: 8px 0; font-size: 13px; border-bottom: 1px solid #e2e8f0; }
+        .info-row:last-child { border-bottom: none; }
+        .info-label { color: #64748b; }
+        .info-value { font-weight: 600; color: #1e293b; }
+
+        .warning-box { background: #fefce8; border-radius: 10px; padding: 14px; margin-bottom: 20px; display: flex; gap: 10px; align-items: flex-start; }
+        .warning-box .icon { font-size: 20px; }
+        .warning-box p { font-size: 12px; color: #92400e; line-height: 1.5; }
+
+        .btn-mulai { width: 100%; padding: 16px; background: #10b981; color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; transition: all 0.2s; }
+        .btn-mulai:hover { background: #059669; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(16,185,129,0.3); }
+        .btn-batal { width: 100%; padding: 10px; background: white; color: #64748b; border: 1px solid #e2e8f0; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+        .btn-batal:hover { background: #f1f5f9; }
+
+        .demo-info { margin-top: 16px; text-align: center; padding: 10px; background: #fefce8; border-radius: 8px; }
+        .demo-info p { font-size: 11px; color: #ca8a04; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="card">
+            <a href="masuk-ujian.html" class="back-link">← Kembali</a>
+
+            <div class="header">
+                <div class="icon">🧪</div>
+                <h1>IPA Terpadu</h1>
+                <span class="kode">Kode: IPA-704</span>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-row">
+                    <span class="info-label">Mata Pelajaran</span>
+                    <span class="info-value">IPA Terpadu</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Guru</span>
+                    <span class="info-value">Bu Ani Lestari, S.Pd.</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Durasi</span>
+                    <span class="info-value">90 menit</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Jumlah Soal</span>
+                    <span class="info-value">25 soal</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Kelas</span>
+                    <span class="info-value">🟡 SMP - 7A</span>
+                </div>
+            </div>
+
+            <div class="warning-box">
+                <span class="icon">⚠️</span>
+                <div>
+                    <p><strong>Perhatikan:</strong></p>
+                    <p>• Jangan tinggalkan halaman ujian<br>• Timer akan mulai saat Anda klik "Mulai"<br>• Jawaban otomatis tersimpan<br>• Pastikan koneksi ke server stabil</p>
+                </div>
+            </div>
+
+            <button class="btn-mulai" onclick="mulaiUjian()">✅ MULAI UJIAN</button>
+            <button class="btn-batal" onclick="window.location.href='masuk-ujian.html'">Batal</button>
+
+            <div class="demo-info">
+                <p>🔶 DEMO: Klik Mulai untuk masuk ke halaman ujian</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function mulaiUjian() {
+            if (confirm('Ujian akan dimulai dan timer berjalan. Anda yakin?')) {
+                window.location.href = 'halaman-ujian.html';
+            }
+        }
+    </script>
+
+</body>
+</html>

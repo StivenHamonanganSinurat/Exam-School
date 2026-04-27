@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EXALAB - Halaman Ujian</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f1f5f9; min-height: 100vh; }
+
+        .top-bar { background: #0f172a; color: white; padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 50; }
+        .timer { display: flex; align-items: center; gap: 8px; font-size: 18px; font-weight: 700; font-variant-numeric: tabular-nums; }
+        .timer.warning { color: #fbbf24; }
+        .timer.danger { color: #ef4444; animation: blink 0.8s infinite; }
+        @keyframes blink { 50% { opacity: 0.5; } }
+        .progress-text { font-size: 12px; color: #94a3b8; }
+
+        .container { max-width: 800px; margin: 0 auto; padding: 16px; }
+
+        .progress-bar-container { background: #e2e8f0; height: 4px; margin-bottom: 16px; border-radius: 2px; }
+        .progress-bar { height: 100%; background: #4f46e5; border-radius: 2px; transition: width 0.3s; }
+
+        .soal-card { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); margin-bottom: 16px; min-height: 200px; }
+        .soal-nomor { font-size: 13px; color: #4f46e5; font-weight: 700; margin-bottom: 12px; }
+        .soal-teks { font-size: 16px; font-weight: 500; color: #1e293b; line-height: 1.6; margin-bottom: 24px; }
+
+        .opsi-list { display: flex; flex-direction: column; gap: 10px; }
+        .opsi-item { display: flex; align-items: center; gap: 12px; padding: 14px 16px; border-radius: 12px; border: 2px solid #e2e8f0; cursor: pointer; transition: all 0.2s; }
+        .opsi-item:hover { border-color: #a5b4fc; background: #f8fafc; }
+        .opsi-item.selected { border-color: #4f46e5; background: #eef2ff; }
+        .opsi-radio { width: 20px; height: 20px; border-radius: 50%; border: 2px solid #cbd5e1; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .opsi-item.selected .opsi-radio { border-color: #4f46e5; background: #4f46e5; }
+        .opsi-item.selected .opsi-radio::after { content: ''; width: 8px; height: 8px; background: white; border-radius: 50%; }
+        .opsi-label { font-weight: 600; color: #4f46e5; width: 24px; }
+        .opsi-teks { font-size: 14px; color: #1e293b; }
+
+        .nav-bottom { display: flex; justify-content: space-between; align-items: center; padding: 16px 0; gap: 10px; }
+        .btn-nav { padding: 12px 20px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
+        .btn-prev { background: white; color: #4f46e5; border: 1px solid #4f46e5; }
+        .btn-next { background: #4f46e5; color: white; }
+        .btn-submit { background: #10b981; color: white; padding: 12px 24px; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; border: none; }
+        .btn-submit:hover { background: #059669; }
+
+        .sync-indicator { position: fixed; bottom: 16px; left: 16px; background: white; padding: 6px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 6px; z-index: 40; }
+        .sync-dot { width: 8px; height: 8px; border-radius: 50%; }
+        .sync-dot.saved { background: #10b981; }
+        .sync-dot.local { background: #f59e0b; }
+
+        .nomor-grid { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+        .nomor-btn { width: 34px; height: 34px; border-radius: 8px; border: 1px solid #e2e8f0; background: white; font-size: 12px; font-weight: 600; cursor: pointer; transition: all 0.2s; color: #64748b; }
+        .nomor-btn.terjawab { background: #eef2ff; border-color: #4f46e5; color: #4f46e5; }
+        .nomor-btn.aktif { background: #4f46e5; color: white; border-color: #4f46e5; }
+        .nomor-btn.ragu { background: #fefce8; border-color: #f59e0b; color: #f59e0b; }
+
+        .demo-label { display: inline-block; background: #fbbf24; color: #000; padding: 2px 8px; border-radius: 8px; font-size: 9px; font-weight: 700; }
+
+        @media (max-width: 500px) { .soal-card { padding: 16px; } }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar">
+        <div>
+            <span style="font-size:13px;">🧪 IPA Terpadu</span>
+            <span class="demo-label">DEMO</span>
+        </div>
+        <div class="timer" id="timer">89:45</div>
+        <div class="progress-text">Soal <span id="currentNo">5</span>/25</div>
+    </div>
+
+    <div class="container">
+        <div class="progress-bar-container">
+            <div class="progress-bar" style="width: 20%;" id="progressBar"></div>
+        </div>
+
+        <!-- NAVIGASI NOMOR -->
+        <div class="nomor-grid" id="nomorGrid"></div>
+
+        <!-- SOAL -->
+        <div class="soal-card">
+            <div class="soal-nomor" id="soalNomor">Soal No. 5</div>
+            <div class="soal-teks" id="soalTeks">Berapakah hasil dari 8 × 7 + 12 ÷ 4?</div>
+            <div class="opsi-list" id="opsiList">
+                <div class="opsi-item selected" onclick="pilihOpsi(this, 0)">
+                    <div class="opsi-radio"></div>
+                    <span class="opsi-label">A</span>
+                    <span class="opsi-teks">59</span>
+                </div>
+                <div class="opsi-item" onclick="pilihOpsi(this, 1)">
+                    <div class="opsi-radio"></div>
+                    <span class="opsi-label">B</span>
+                    <span class="opsi-teks">56</span>
+                </div>
+                <div class="opsi-item" onclick="pilihOpsi(this, 2)">
+                    <div class="opsi-radio"></div>
+                    <span class="opsi-label">C</span>
+                    <span class="opsi-teks">62</span>
+                </div>
+                <div class="opsi-item" onclick="pilihOpsi(this, 3)">
+                    <div class="opsi-radio"></div>
+                    <span class="opsi-label">D</span>
+                    <span class="opsi-teks">68</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-bottom">
+            <button class="btn-nav btn-prev" onclick="prevSoal()">← Sebelumnya</button>
+            <span style="font-size:12px;color:#64748b;">⏱️ Timer terus berjalan</span>
+            <button class="btn-nav btn-next" onclick="nextSoal()">Selanjutnya →</button>
+        </div>
+        <div style="text-align:center;margin-top:12px;">
+            <button class="btn-submit" onclick="submitUjian()">📤 Selesai & Kumpulkan</button>
+        </div>
+    </div>
+
+    <div class="sync-indicator">
+        <div class="sync-dot saved"></div>
+        <span id="syncText">✅ Tersimpan</span>
+    </div>
+
+    <script>
+        let soalSaatIni = 5;
+        const totalSoal = 25;
+
+        function renderNomor() {
+            const grid = document.getElementById('nomorGrid');
+            let html = '';
+            for (let i = 1; i <= totalSoal; i++) {
+                let cls = '';
+                if (i === soalSaatIni) cls = 'aktif';
+                else if (i <= 4) cls = 'terjawab';
+                html += `<button class="nomor-btn ${cls}" onclick="goToSoal(${i})">${i}</button>`;
+            }
+            grid.innerHTML = html;
+            document.getElementById('currentNo').textContent = soalSaatIni;
+            document.getElementById('soalNomor').textContent = `Soal No. ${soalSaatIni}`;
+            document.getElementById('progressBar').style.width = ((soalSaatIni / totalSoal) * 100) + '%';
+        }
+
+        function pilihOpsi(el, index) {
+            document.querySelectorAll('.opsi-item').forEach(o => o.classList.remove('selected'));
+            el.classList.add('selected');
+            document.getElementById('syncText').textContent = '💾 Tersimpan Lokal';
+            document.querySelector('.sync-dot').className = 'sync-dot local';
+            setTimeout(() => {
+                document.getElementById('syncText').textContent = '✅ Terkirim';
+                document.querySelector('.sync-dot').className = 'sync-dot saved';
+            }, 1500);
+        }
+
+        function nextSoal() { if (soalSaatIni < totalSoal) { soalSaatIni++; renderNomor(); } }
+        function prevSoal() { if (soalSaatIni > 1) { soalSaatIni--; renderNomor(); } }
+        function goToSoal(n) { soalSaatIni = n; renderNomor(); }
+
+        function submitUjian() {
+            if (confirm('Yakin ingin mengumpulkan jawaban? Pastikan semua soal sudah dijawab.')) {
+                window.location.href = 'review-jawaban.html';
+            }
+        }
+
+        renderNomor();
+
+        // Timer sederhana
+        let detik = 5385;
+        setInterval(() => {
+            detik--;
+            const m = Math.floor(detik / 60);
+            const s = detik % 60;
+            const el = document.getElementById('timer');
+            el.textContent = `${m}:${s.toString().padStart(2, '0')}`;
+            if (detik < 300) el.classList.add('danger');
+            else if (detik < 600) el.classList.add('warning');
+            if (detik <= 0) submitUjian();
+        }, 1000);
+    </script>
+
+</body>
+</html>

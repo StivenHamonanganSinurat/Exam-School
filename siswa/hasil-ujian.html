@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EXALAB - Hasil Ujian</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f1f5f9; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+
+        .container { width: 100%; max-width: 440px; }
+        .card { background: white; border-radius: 20px; padding: 32px 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.06); text-align: center; }
+
+        .icon-big { font-size: 56px; margin-bottom: 12px; }
+        h1 { font-size: 20px; font-weight: 800; color: #1e293b; margin-bottom: 6px; }
+        .status { font-size: 14px; color: #059669; font-weight: 600; margin-bottom: 20px; }
+
+        .nilai-circle { width: 130px; height: 130px; border-radius: 50%; background: #ecfdf5; border: 6px solid #10b981; display: flex; flex-direction: column; align-items: center; justify-content: center; margin: 0 auto 20px; }
+        .nilai-angka { font-size: 42px; font-weight: 800; color: #059669; }
+        .nilai-label { font-size: 12px; color: #64748b; }
+
+        .info-grid { background: #f8fafc; border-radius: 12px; padding: 16px; margin-bottom: 20px; }
+        .info-row { display: flex; justify-content: space-between; padding: 6px 0; font-size: 13px; }
+        .info-label { color: #64748b; }
+        .info-value { font-weight: 600; color: #1e293b; }
+
+        .btn-kembali { display: block; width: 100%; padding: 14px; background: #4f46e5; color: white; border-radius: 10px; text-decoration: none; font-weight: 700; font-size: 14px; text-align: center; }
+        .btn-kembali:hover { background: #4338ca; }
+
+        .demo-info { margin-top: 16px; padding: 10px; background: #fefce8; border-radius: 8px; }
+        .demo-info p { font-size: 11px; color: #ca8a04; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <div class="card">
+            <div class="icon-big">🎉</div>
+            <h1>Ujian Selesai!</h1>
+            <p class="status">✅ Jawaban berhasil dikumpulkan</p>
+
+            <div class="nilai-circle">
+                <div class="nilai-angka">85</div>
+                <div class="nilai-label">Nilai</div>
+            </div>
+
+            <div class="info-grid">
+                <div class="info-row">
+                    <span class="info-label">Mata Pelajaran</span>
+                    <span class="info-value">🧪 IPA Terpadu</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Benar</span>
+                    <span class="info-value">21 / 25</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Waktu</span>
+                    <span class="info-value">78 menit</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Status</span>
+                    <span class="info-value" style="color:#059669;">🟢 Lulus</span>
+                </div>
+            </div>
+
+            <a href="dashboard.html" class="btn-kembali">🏠 Kembali ke Dashboard</a>
+
+            <div class="demo-info">
+                <p>🔶 DEMO: Nilai di atas adalah simulasi</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

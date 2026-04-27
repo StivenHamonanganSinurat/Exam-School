@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EXALAB - Review Jawaban</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f1f5f9; min-height: 100vh; padding: 20px; }
+
+        .container { max-width: 600px; margin: 0 auto; }
+        .card { background: white; border-radius: 16px; padding: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); margin-bottom: 16px; }
+
+        h1 { font-size: 20px; font-weight: 800; color: #1e293b; margin-bottom: 4px; }
+        .subtitle { font-size: 13px; color: #64748b; margin-bottom: 20px; }
+
+        .summary { display: flex; gap: 16px; margin-bottom: 20px; text-align: center; }
+        .summary-item { flex: 1; background: #f8fafc; border-radius: 10px; padding: 14px; }
+        .summary-value { font-size: 24px; font-weight: 800; }
+        .summary-label { font-size: 11px; color: #64748b; }
+        .summary-value.green { color: #059669; }
+        .summary-value.orange { color: #f59e0b; }
+        .summary-value.red { color: #dc2626; }
+
+        .review-list { display: flex; flex-direction: column; gap: 8px; }
+        .review-item { display: flex; align-items: center; gap: 12px; padding: 12px 14px; border-radius: 10px; border: 1px solid #e2e8f0; font-size: 14px; }
+        .review-nomor { font-weight: 700; width: 28px; }
+        .review-jawaban { flex: 1; font-weight: 500; }
+        .review-status { font-size: 11px; font-weight: 600; padding: 4px 8px; border-radius: 10px; }
+        .review-status.terjawab { background: #ecfdf5; color: #059669; }
+        .review-status.belum { background: #fef2f2; color: #dc2626; }
+        .review-status.ragu { background: #fefce8; color: #ca8a04; }
+
+        .btn-submit { width: 100%; padding: 16px; background: #10b981; color: white; border: none; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; }
+        .btn-submit:hover { background: #059669; }
+        .btn-back { display: inline-block; margin-bottom: 6px; font-size: 13px; color: #4f46e5; text-decoration: none; font-weight: 600; }
+
+        @media (max-width: 400px) { .card { padding: 16px; } }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <a href="halaman-ujian.html" class="btn-back">← Kembali ke Ujian</a>
+        <div class="card">
+            <h1>📋 Review Jawaban</h1>
+            <p class="subtitle">Periksa kembali jawaban Anda sebelum dikumpulkan</p>
+
+            <div class="summary">
+                <div class="summary-item">
+                    <div class="summary-value green">20</div>
+                    <div class="summary-label">Terjawab</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value orange">3</div>
+                    <div class="summary-label">Ragu-ragu</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-value red">2</div>
+                    <div class="summary-label">Belum</div>
+                </div>
+            </div>
+
+            <div class="review-list">
+                <div class="review-item">
+                    <span class="review-nomor">1.</span>
+                    <span class="review-jawaban">A. Jakarta</span>
+                    <span class="review-status terjawab">● Terjawab</span>
+                </div>
+                <div class="review-item">
+                    <span class="review-nomor">2.</span>
+                    <span class="review-jawaban">C. 62</span>
+                    <span class="review-status ragu">◉ Ragu</span>
+                </div>
+                <div class="review-item">
+                    <span class="review-nomor">3.</span>
+                    <span class="review-jawaban">-</span>
+                    <span class="review-status belum">● Belum</span>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn-submit" onclick="konfirmasiSubmit()">✅ Kumpulkan Semua Jawaban</button>
+    </div>
+
+    <script>
+        function konfirmasiSubmit() {
+            if (confirm('⚠️ Setelah dikumpulkan, jawaban tidak bisa diubah. Lanjutkan?')) {
+                window.location.href = 'hasil-ujian.html';
+            }
+        }
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EXALAB - Dashboard Siswa</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f1f5f9;
+            color: #1e293b;
+            min-height: 100vh;
+        }
+
+        .top-bar {
+            background: white;
+            padding: 14px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 0;
+            z-index: 50;
+        }
+        .top-bar .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 18px;
+        }
+        .top-bar .logo .logo-icon {
+            width: 36px; height: 36px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 16px; font-weight: 800;
+        }
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .user-avatar {
+            width: 36px; height: 36px;
+            background: #c7d2fe; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 700; color: #3730a3; font-size: 14px;
+        }
+        .user-name { font-weight: 600; font-size: 14px; }
+        .user-kelas { font-size: 11px; color: #64748b; }
+        .btn-logout {
+            padding: 6px 14px;
+            background: #fee2e2; color: #dc2626;
+            border: none; border-radius: 6px;
+            font-size: 12px; font-weight: 600;
+            cursor: pointer; text-decoration: none;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 24px 16px;
+        }
+
+        .welcome-banner {
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            padding: 24px;
+            border-radius: 16px;
+            margin-bottom: 24px;
+        }
+        .welcome-banner h1 { font-size: 20px; margin-bottom: 4px; }
+        .welcome-banner p { font-size: 13px; opacity: 0.85; }
+
+        .section-title {
+            font-size: 16px; font-weight: 700;
+            margin-bottom: 14px;
+            display: flex; align-items: center; gap: 8px;
+        }
+
+        .ujian-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
+            margin-bottom: 28px;
+        }
+        .ujian-card {
+            background: white;
+            border-radius: 14px;
+            padding: 18px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+            border: 2px solid transparent;
+            transition: all 0.2s;
+            cursor: pointer;
+            text-decoration: none;
+            color: #1e293b;
+            display: block;
+        }
+        .ujian-card:hover {
+            border-color: #4f46e5;
+            transform: translateY(-2px);
+        }
+        .ujian-card .mapel {
+            font-weight: 700;
+            font-size: 15px;
+            margin-bottom: 4px;
+        }
+        .ujian-card .info {
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 10px;
+        }
+        .ujian-card .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 700;
+        }
+        .badge.aktif { background: #ecfdf5; color: #059669; }
+        .badge.segera { background: #fefce8; color: #ca8a04; }
+
+        .riwayat-list {
+            background: white;
+            border-radius: 14px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+        .riwayat-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .riwayat-item:last-child { border-bottom: none; }
+        .riwayat-nilai {
+            font-weight: 700;
+            font-size: 16px;
+        }
+        .riwayat-nilai.tinggi { color: #059669; }
+        .riwayat-nilai.sedang { color: #f59e0b; }
+        .riwayat-nilai.rendah { color: #dc2626; }
+
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: #94a3b8;
+        }
+        .empty-state .icon { font-size: 40px; margin-bottom: 8px; }
+
+        .demo-label {
+            display: inline-block;
+            background: #fbbf24; color: #000;
+            padding: 3px 10px; border-radius: 12px;
+            font-size: 10px; font-weight: 700;
+            margin-left: 8px;
+        }
+
+        @media (max-width: 600px) {
+            .ujian-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========== TOP BAR ========== -->
+    <div class="top-bar">
+        <div class="logo">
+            <div class="logo-icon">E</div>
+            EXALAB <span class="demo-label">DEMO</span>
+        </div>
+        <div class="user-menu">
+            <div>
+                <div class="user-name">Ahmad Fauzi</div>
+                <div class="user-kelas">🟡 SMP - Kelas 7A</div>
+            </div>
+            <div class="user-avatar">AF</div>
+            <a href="../login.html" class="btn-logout">🚪 Keluar</a>
+        </div>
+    </div>
+
+    <!-- ========== CONTENT ========== -->
+    <div class="container">
+        <div class="welcome-banner">
+            <h1>👋 Selamat Datang, Ahmad!</h1>
+            <p>SMP - Kelas 7A | NISN: 0071234567</p>
+        </div>
+
+        <!-- UJIAN TERSEDIA -->
+        <div class="section-title">📋 Ujian Tersedia</div>
+        <div class="ujian-grid">
+            <a href="masuk-ujian.html" class="ujian-card">
+                <div class="mapel">🧪 IPA Terpadu</div>
+                <div class="info">⏱️ 90 menit | 📝 25 soal | 👨‍🏫 Bu Ani Lestari</div>
+                <span class="badge aktif">● Sedang Berlangsung</span>
+            </a>
+            <a href="masuk-ujian.html" class="ujian-card">
+                <div class="mapel">📐 Matematika</div>
+                <div class="info">⏱️ 60 menit | 📝 20 soal | 👨‍🏫 Pak Budi Santoso</div>
+                <span class="badge segera">◉ Besok, 08:00</span>
+            </a>
+        </div>
+
+        <!-- RIWAYAT UJIAN -->
+        <div class="section-title">📊 Riwayat Ujian</div>
+        <div class="riwayat-list">
+            <div class="riwayat-item">
+                <div>
+                    <div style="font-weight:600;">📝 B. Indonesia</div>
+                    <div style="font-size:12px;color:#64748b;">20 Apr 2026 | 60 menit</div>
+                </div>
+                <div class="riwayat-nilai tinggi">85</div>
+            </div>
+            <div class="riwayat-item">
+                <div>
+                    <div style="font-weight:600;">🌍 IPS</div>
+                    <div style="font-size:12px;color:#64748b;">18 Apr 2026 | 60 menit</div>
+                </div>
+                <div class="riwayat-nilai sedang">72</div>
+            </div>
+            <div class="riwayat-item">
+                <div>
+                    <div style="font-weight:600;">📐 Matematika</div>
+                    <div style="font-size:12px;color:#64748b;">15 Apr 2026 | 90 menit</div>
+                </div>
+                <div class="riwayat-nilai rendah">58</div>
+            </div>
+            <div class="riwayat-item">
+                <div>
+                    <div style="font-weight:600;">🧪 IPA Terpadu</div>
+                    <div style="font-size:12px;color:#64748b;">10 Apr 2026 | 90 menit</div>
+                </div>
+                <div class="riwayat-nilai tinggi">92</div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
