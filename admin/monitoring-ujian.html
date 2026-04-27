@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EXALAB - Monitoring Ujian</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f1f5f9; color: #1e293b; display: flex; min-height: 100vh; }
+        .sidebar { width: 260px; background: #0f172a; color: white; padding: 20px; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; overflow-y: auto; }
+        .sidebar-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #1e293b; }
+        .sidebar-logo .logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg, #4f46e5, #7c3aed); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; }
+        .sidebar-section { margin-bottom: 20px; }
+        .sidebar-section h3 { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: #64748b; margin-bottom: 10px; padding-left: 8px; }
+        .sidebar a { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; color: #cbd5e1; text-decoration: none; font-size: 13px; font-weight: 500; transition: all 0.2s; margin-bottom: 2px; }
+        .sidebar a:hover { background: #1e293b; color: white; }
+        .sidebar a.active { background: #1e293b; color: white; border-left: 3px solid #4f46e5; }
+        .sidebar-footer { margin-top: auto; padding-top: 16px; border-top: 1px solid #1e293b; }
+        .sidebar-footer a { color: #94a3b8; font-size: 12px; display: block; padding: 6px 0; }
+
+        .main-content { margin-left: 260px; padding: 24px; flex: 1; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .breadcrumb { font-size: 13px; color: #64748b; }
+        .breadcrumb a { color: #4f46e5; text-decoration: none; }
+        .user-info { display: flex; align-items: center; gap: 10px; background: white; padding: 8px 16px; border-radius: 30px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+        .user-avatar { width: 36px; height: 36px; background: #c7d2fe; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #3730a3; font-size: 14px; }
+
+        .stats-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
+        .stat-card { background: white; padding: 16px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); text-align: center; }
+        .stat-value { font-size: 28px; font-weight: 800; }
+        .stat-label { font-size: 11px; color: #64748b; }
+        .stat-value.green { color: #059669; }
+        .stat-value.blue { color: #4f46e5; }
+
+        .panel { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+        .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 10px; font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; border-bottom: 2px solid #e2e8f0; background: #f8fafc; }
+        td { padding: 10px; font-size: 13px; border-bottom: 1px solid #f1f5f9; }
+        .badge { padding: 3px 8px; border-radius: 20px; font-size: 10px; font-weight: 600; }
+        .badge.aktif { background: #ecfdf5; color: #059669; }
+        .badge.draft { background: #fefce8; color: #ca8a04; }
+        .demo-label { display: inline-block; background: #fbbf24; color: #000; padding: 3px 10px; border-radius: 12px; font-size: 10px; font-weight: 700; margin-left: 8px; }
+
+        @media (max-width: 768px) { .sidebar { width: 200px; } .main-content { margin-left: 200px; } .stats-row { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+    <aside class="sidebar">
+        <div class="sidebar-logo"><div class="logo-icon">E</div><div><h2>EXALAB</h2><span>Admin Panel - SMP</span></div></div>
+        <div class="sidebar-section"><h3>Menu</h3>
+            <a href="dashboard.html"><span class="icon">📊</span> Dashboard</a>
+            <a href="manajemen-guru.html"><span class="icon">👨‍🏫</span> Manajemen Guru</a>
+            <a href="manajemen-siswa.html"><span class="icon">🎓</span> Manajemen Siswa</a>
+            <a href="manajemen-kelas.html"><span class="icon">🏫</span> Manajemen Kelas</a>
+            <a href="bank-soal.html"><span class="icon">📁</span> Bank Soal</a>
+            <a href="monitoring-ujian.html" class="active"><span class="icon">👁️</span> Monitoring Ujian</a>
+        </div>
+        <div class="sidebar-footer"><a href="../login.html">🚪 Logout</a><a href="../index.html" style="font-size:10px;">← Kembali ke Home</a></div>
+    </aside>
+
+    <main class="main-content">
+        <div class="top-bar">
+            <div><h1 style="font-size:24px;font-weight:800;">👁️ Monitoring Ujian <span class="demo-label">DEMO</span></h1><p class="breadcrumb"><a href="dashboard.html">Dashboard</a> / Monitoring</p></div>
+            <div class="user-info"><div class="user-avatar">DI</div><div><div class="user-name">Dedi Irawan</div><div class="user-role">Admin SMP</div></div></div>
+        </div>
+
+        <div class="stats-row">
+            <div class="stat-card"><div class="stat-value blue">5</div><div class="stat-label">Ujian Aktif</div></div>
+            <div class="stat-card"><div class="stat-value green">320</div><div class="stat-label">Total Peserta</div></div>
+            <div class="stat-card"><div class="stat-value green">280</div><div class="stat-label">Sudah Submit</div></div>
+        </div>
+
+        <div class="panel">
+            <div class="panel-header"><h2>📋 Ujian SMP</h2></div>
+            <table>
+                <thead><tr><th>Ujian</th><th>Guru</th><th>Kelas</th><th>Peserta</th><th>Submit</th><th>Status</th></tr></thead>
+                <tbody>
+                    <tr><td>IPA Terpadu</td><td>Ani Lestari</td><td>8A, 8B</td><td>64</td><td>58</td><td><span class="badge aktif">Aktif</span></td></tr>
+                    <tr><td>B. Inggris</td><td>Gina Amelia</td><td>9C</td><td>30</td><td>0</td><td><span class="badge draft">Draft</span></td></tr>
+                    <tr><td>Matematika</td><td>Budi S.</td><td>7A</td><td>32</td><td>32</td><td><span class="badge aktif">Selesai</span></td></tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
+
+</body>
+</html>
