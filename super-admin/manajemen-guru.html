@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EXALAB - Manajemen Guru</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f1f5f9;
+            color: #1e293b;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: #0f172a;
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0; left: 0; bottom: 0;
+            z-index: 100;
+            overflow-y: auto;
+        }
+        .sidebar-logo {
+            display: flex; align-items: center; gap: 12px;
+            margin-bottom: 30px; padding-bottom: 20px;
+            border-bottom: 1px solid #1e293b;
+        }
+        .sidebar-logo .logo-icon {
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 18px;
+        }
+        .sidebar-logo h2 { font-size: 18px; font-weight: 700; }
+        .sidebar-logo span { font-size: 11px; color: #fbbf24; display: block; }
+        .sidebar-section { margin-bottom: 20px; }
+        .sidebar-section h3 {
+            font-size: 10px; text-transform: uppercase;
+            letter-spacing: 1.5px; color: #64748b;
+            margin-bottom: 10px; padding-left: 8px;
+        }
+        .sidebar a {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 12px; border-radius: 8px;
+            color: #cbd5e1; text-decoration: none;
+            font-size: 13px; font-weight: 500;
+            transition: all 0.2s; margin-bottom: 2px;
+        }
+        .sidebar a:hover { background: #1e293b; color: white; }
+        .sidebar a.active { background: #1e293b; color: white; border-left: 3px solid #4f46e5; }
+        .sidebar a .icon { font-size: 16px; width: 20px; text-align: center; }
+        .sidebar a .badge-count {
+            margin-left: auto;
+            background: #4f46e5; padding: 2px 8px;
+            border-radius: 10px; font-size: 10px; font-weight: 700;
+        }
+        .sidebar-footer {
+            margin-top: auto; padding-top: 16px;
+            border-top: 1px solid #1e293b;
+        }
+        .sidebar-footer a { color: #94a3b8; font-size: 12px; }
+
+        .main-content {
+            margin-left: 260px; padding: 24px; flex: 1;
+        }
+        .top-bar {
+            display: flex; justify-content: space-between;
+            align-items: center; margin-bottom: 24px;
+        }
+        .top-bar h1 { font-size: 24px; font-weight: 800; }
+        .top-bar .breadcrumb { font-size: 13px; color: #64748b; }
+        .top-bar .breadcrumb a { color: #4f46e5; text-decoration: none; }
+        .user-info {
+            display: flex; align-items: center; gap: 10px;
+            background: white; padding: 8px 16px;
+            border-radius: 30px; box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        .user-avatar {
+            width: 36px; height: 36px; background: #c7d2fe;
+            border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; font-weight: 700;
+            color: #3730a3; font-size: 14px;
+        }
+        .user-name { font-weight: 600; font-size: 14px; }
+        .user-role { font-size: 11px; color: #64748b; }
+
+        .toolbar {
+            display: flex; justify-content: space-between;
+            align-items: center; margin-bottom: 20px;
+            flex-wrap: wrap; gap: 12px;
+        }
+        .btn {
+            padding: 10px 18px; border-radius: 8px;
+            font-size: 13px; font-weight: 600; cursor: pointer;
+            border: none; transition: all 0.2s;
+            text-decoration: none; display: inline-block;
+        }
+        .btn-primary { background: #4f46e5; color: white; }
+        .btn-primary:hover { background: #4338ca; }
+        .btn-outline { background: white; color: #4f46e5; border: 1px solid #4f46e5; }
+        .btn-outline:hover { background: #eef2ff; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-sm { padding: 5px 12px; font-size: 11px; border-radius: 6px; }
+        .btn-success { background: #10b981; color: white; }
+        .btn-success:hover { background: #059669; }
+
+        .filter-group {
+            display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+        }
+        .filter-group select, .filter-group input {
+            padding: 8px 14px; border-radius: 8px;
+            border: 1px solid #e2e8f0; background: white;
+            font-size: 13px; font-family: inherit;
+        }
+        .filter-group select:focus, .filter-group input:focus {
+            outline: none; border-color: #4f46e5;
+        }
+
+        .panel {
+            background: white; border-radius: 12px;
+            padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
+        }
+        .panel-header {
+            display: flex; justify-content: space-between;
+            align-items: center; margin-bottom: 16px;
+        }
+        .panel-header h2 { font-size: 16px; font-weight: 700; }
+        .count-info { font-size: 13px; color: #64748b; }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: white; padding: 16px; border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08); text-align: center;
+        }
+        .stat-value { font-size: 24px; font-weight: 800; color: #1e293b; }
+        .stat-label { font-size: 11px; color: #64748b; margin-top: 2px; }
+
+        .table-responsive { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th {
+            text-align: left; padding: 12px 14px;
+            font-size: 11px; font-weight: 600; color: #64748b;
+            text-transform: uppercase; letter-spacing: 0.5px;
+            border-bottom: 2px solid #e2e8f0; background: #f8fafc;
+        }
+        td {
+            padding: 12px 14px; font-size: 13px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        tr:hover { background: #f8fafc; }
+        .badge {
+            padding: 4px 10px; border-radius: 20px;
+            font-size: 11px; font-weight: 600;
+        }
+        .badge.success { background: #ecfdf5; color: #059669; }
+        .badge.warning { background: #fefce8; color: #ca8a04; }
+        .badge.info { background: #eef2ff; color: #4f46e5; }
+        .badge.danger { background: #fef2f2; color: #dc2626; }
+        .actions { display: flex; gap: 6px; }
+
+        .modal-overlay {
+            display: none;
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            align-items: center; justify-content: center;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal {
+            background: white; border-radius: 16px;
+            padding: 30px; width: 90%; max-width: 600px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-height: 90vh; overflow-y: auto;
+        }
+        .modal h3 { font-size: 18px; margin-bottom: 20px; }
+        .modal .form-row {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+        .modal .form-group { margin-bottom: 14px; }
+        .modal .form-group label {
+            display: block; font-size: 13px; font-weight: 600;
+            margin-bottom: 4px; color: #475569;
+        }
+        .modal .form-group input, .modal .form-group select {
+            width: 100%; padding: 10px 14px;
+            border-radius: 8px; border: 1px solid #e2e8f0;
+            font-size: 13px; font-family: inherit;
+        }
+        .modal .form-group input:focus, .modal .form-group select:focus {
+            outline: none; border-color: #4f46e5;
+        }
+        .modal-actions {
+            display: flex; gap: 10px; justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .demo-label {
+            display: inline-block;
+            background: #fbbf24; color: #000;
+            padding: 3px 10px; border-radius: 12px;
+            font-size: 10px; font-weight: 700;
+            margin-left: 8px;
+        }
+        .text-muted { color: #64748b; font-size: 12px; }
+        .text-right { text-align: right; }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 200px; }
+            .main-content { margin-left: 200px; }
+            .stats-row { grid-template-columns: repeat(2, 1fr); }
+            .toolbar { flex-direction: column; align-items: flex-start; }
+            .filter-group { width: 100%; }
+            .modal .form-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========== SIDEBAR ========== -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-icon">E</div>
+            <div>
+                <h2>EXALAB</h2>
+                <span>Super Admin Panel</span>
+            </div>
+        </div>
+
+        <div class="sidebar-section">
+            <h3>Menu Utama</h3>
+            <a href="dashboard.html">
+                <span class="icon">📊</span> Dashboard
+            </a>
+            <a href="manajemen-admin.html">
+                <span class="icon">👥</span> Manajemen Admin
+            </a>
+            <a href="manajemen-guru.html" class="active">
+                <span class="icon">👨‍🏫</span> Manajemen Guru
+                <span class="badge-count">83</span>
+            </a>
+            <a href="manajemen-siswa.html">
+                <span class="icon">🎓</span> Manajemen Siswa
+                <span class="badge-count">1.050</span>
+            </a>
+        </div>
+
+        <div class="sidebar-section">
+            <h3>Akademik</h3>
+            <a href="bank-soal-sekolah.html">
+                <span class="icon">📁</span> Bank Soal Sekolah
+            </a>
+            <a href="laporan-gabungan.html">
+                <span class="icon">📈</span> Laporan Gabungan
+            </a>
+            <a href="audit-log.html">
+                <span class="icon">📋</span> Audit Log
+            </a>
+            <a href="pengaturan-server.html">
+                <span class="icon">⚙️</span> Pengaturan Server
+            </a>
+        </div>
+
+        <div class="sidebar-footer">
+            <a href="../login.html">🚪 Logout</a>
+            <br>
+            <a href="../index.html" style="font-size:10px;">← Kembali ke Home</a>
+        </div>
+    </aside>
+
+    <!-- ========== MAIN CONTENT ========== -->
+    <main class="main-content">
+        <div class="top-bar">
+            <div>
+                <h1>👨‍🏫 Manajemen Guru <span class="demo-label">DEMO</span></h1>
+                <p class="breadcrumb">
+                    <a href="dashboard.html">Dashboard</a> / Manajemen Guru
+                </p>
+            </div>
+            <div class="user-info">
+                <div class="user-avatar">KS</div>
+                <div>
+                    <div class="user-name">Dr. H. Ahmad Fauzi, M.Pd.</div>
+                    <div class="user-role">Super Admin</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-value" style="color:#4f46e5;">83</div>
+                <div class="stat-label">Total Guru</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" style="color:#10b981;">78</div>
+                <div class="stat-label">Guru Aktif</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" style="color:#f97316;">5</div>
+                <div class="stat-label">Cuti / Nonaktif</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value" style="color:#8b5cf6;">25</div>
+                <div class="stat-label">Mapel Diajar</div>
+            </div>
+        </div>
+
+        <!-- TOOLBAR -->
+        <div class="toolbar">
+            <div style="display:flex;gap:8px;">
+                <button class="btn btn-primary" onclick="openModal()">➕ Tambah Guru</button>
+                <button class="btn btn-outline">📥 Impor Excel</button>
+                <button class="btn btn-outline">📤 Ekspor Data</button>
+            </div>
+            <div class="filter-group">
+                <select>
+                    <option value="">Semua Jenjang</option>
+                    <option value="sd">SD</option>
+                    <option value="smp">SMP</option>
+                    <option value="sma">SMA</option>
+                </select>
+                <select>
+                    <option value="">Semua Mapel</option>
+                    <option value="ipa">IPA</option>
+                    <option value="ips">IPS</option>
+                    <option value="mtk">Matematika</option>
+                    <option value="bindo">B. Indonesia</option>
+                    <option value="bing">B. Inggris</option>
+                </select>
+                <select>
+                    <option value="">Semua Status</option>
+                    <option value="aktif">Aktif</option>
+                    <option value="nonaktif">Nonaktif</option>
+                </select>
+                <input type="text" placeholder="🔍 Cari NIP atau nama...">
+            </div>
+        </div>
+
+        <!-- TABEL GURU -->
+        <div class="panel">
+            <div class="panel-header">
+                <h2>📋 Daftar Guru</h2>
+                <span class="count-info">Menampilkan 7 dari 83 guru</span>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>NIP</th>
+                            <th>Nama Lengkap</th>
+                            <th>Jenjang</th>
+                            <th>Mapel</th>
+                            <th>Kelas</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>198501012010011001</td>
+                            <td><strong>Ani Lestari, S.Pd.</strong></td>
+                            <td>🟡 SMP</td>
+                            <td>IPA Terpadu</td>
+                            <td>7A, 7B, 8A</td>
+                            <td><span class="badge success">Aktif</span></td>
+                            <td>
+                                <div class="actions">
+                                    <button class="btn btn-outline btn-sm">Detail</button>
+                                    <button class="btn btn-outline btn-sm">Reset</button>
+                                    <button class="btn btn-danger btn-sm">Nonaktifkan</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>198703122011012002</td>
+                            <td><strong>Budi Santoso, M.Pd.</strong></td>
+                            <td>🟢 SD</td>
+                            <td>Matematika</td>
+                            <td>5A, 5B, 6A</td>
+                            <td><span class="badge success">Aktif</span></td>
+                            <td>
+                                <div class="actions">
+                                    <button class="btn btn-outline btn-sm">Detail</button>
+                                    <button class="btn btn-outline btn-sm">Reset</button>
+                                    <button class="btn btn-danger btn-sm">Nonaktifkan</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>199005062014032003</td>
+                            <td><strong>Citra Dewi, S.Pd.</strong></td>
+                            <td>🔵 SMA</td>
+                            <td>Biologi</td>
+                            <td>10 IPA, 11 IPA</td>
+                            <td><span class="badge success">Aktif</span></td>
+                            <td>
+                                <div class="actions">
+                                    <button class="btn btn-outline btn-sm">Detail</button>
+                                    <button class="btn btn-outline btn-sm">Reset</button>
+                                    <button class="btn btn-danger btn-sm">Nonaktifkan</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>198812102009011004</td>
+                            <td><strong>Dedi Irawan, M.Kom.</strong></td>
+                            <td>🟡 SMP</td>
+                            <td>TIK</td>
+                            <td>7, 8, 9</td>
+                            <td><span class="badge success">Aktif</span></td>
+                            <td>
+                                <div class="actions">
+                                    <button class="btn btn-outline btn-sm">Detail</button>
+                                    <button class="btn btn-outline btn-sm">Reset</button>
+                                    <button class="btn btn-danger btn-sm">Nonaktifkan</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>199207152015052005</td>
+                            <td><strong>Eka Putri, S.Pd.</strong></td>
+                            <td>🟢 SD</td>
+                            <td>B. Indonesia</td>
+                            <td>4A, 4B</td>
+                            <td><span class="badge success">Aktif</span></td>
+                            <td>
+                                <div class="actions">
+                                    <button class="btn btn-outline btn-sm">Detail</button>
+                                    <button class="btn btn-outline btn-sm">Reset</button>
+                                    <button class="btn btn-danger btn-sm">Nonaktifkan</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>198405082008061006</td>
+                            <td><strong>Fahmi Rizky, S.Pd.</strong></td>
+                            <td>🔵 SMA</td>
+                            <td>Fisika</td>
+                            <td>10, 11</td>
+                            <td><span class="badge warning">Cuti</span></td>
+                            <td>
+                                <div class="actions">
+                                    <button class="btn btn-outline btn-sm">Detail</button>
+                                    <button class="btn btn-outline btn-sm">Reset</button>
+                                    <button class="btn btn-success btn-sm">Aktifkan</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>199309182016072007</td>
+                            <td><strong>Gina Amelia, M.Pd.</strong></td>
+                            <td>🟡 SMP</td>
+                            <td>B. Inggris</td>
+                            <td>8A, 8B, 9C</td>
+                            <td><span class="badge info">Baru</span></td>
+                            <td>
+                                <div class="actions">
+                                    <button class="btn btn-outline btn-sm">Detail</button>
+                                    <button class="btn btn-outline btn-sm">Reset</button>
+                                    <button class="btn btn-danger btn-sm">Nonaktifkan</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </main>
+
+    <!-- ========== MODAL TAMBAH GURU ========== -->
+    <div class="modal-overlay" id="modalTambah">
+        <div class="modal">
+            <h3>➕ Tambah Guru Baru</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>NIP</label>
+                    <input type="text" placeholder="Nomor Induk Pegawai">
+                </div>
+                <div class="form-group">
+                    <label>Nama Lengkap</label>
+                    <input type="text" placeholder="Nama lengkap beserta gelar">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" placeholder="email@school.id">
+                </div>
+                <div class="form-group">
+                    <label>No. HP</label>
+                    <input type="tel" placeholder="08xxxxxxxxxx">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Jenjang</label>
+                    <select>
+                        <option value="">Pilih Jenjang</option>
+                        <option value="sd">SD</option>
+                        <option value="smp">SMP</option>
+                        <option value="sma">SMA</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Mata Pelajaran</label>
+                    <select>
+                        <option value="">Pilih Mapel</option>
+                        <option value="ipa">IPA</option>
+                        <option value="ips">IPS</option>
+                        <option value="mtk">Matematika</option>
+                        <option value="bindo">B. Indonesia</option>
+                        <option value="bing">B. Inggris</option>
+                        <option value="tik">TIK</option>
+                        <option value="fisika">Fisika</option>
+                        <option value="biologi">Biologi</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Password Default</label>
+                <input type="text" value="guru123" readonly>
+                <small class="text-muted">Password bisa diganti setelah login pertama</small>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closeModal()">Batal</button>
+                <button class="btn btn-primary" onclick="closeModal(); alert('✅ Guru berhasil ditambahkan! (Demo)')">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openModal() {
+            document.getElementById('modalTambah').classList.add('show');
+        }
+        function closeModal() {
+            document.getElementById('modalTambah').classList.remove('show');
+        }
+        document.getElementById('modalTambah').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+    </script>
+
+</body>
+</html>

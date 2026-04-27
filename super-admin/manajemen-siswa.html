@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EXALAB - Manajemen Siswa</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f1f5f9;
+            color: #1e293b;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: #0f172a;
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0; left: 0; bottom: 0;
+            z-index: 100;
+            overflow-y: auto;
+        }
+        .sidebar-logo {
+            display: flex; align-items: center; gap: 12px;
+            margin-bottom: 30px; padding-bottom: 20px;
+            border-bottom: 1px solid #1e293b;
+        }
+        .sidebar-logo .logo-icon {
+            width: 40px; height: 40px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 18px;
+        }
+        .sidebar-logo h2 { font-size: 18px; font-weight: 700; }
+        .sidebar-logo span { font-size: 11px; color: #fbbf24; display: block; }
+        .sidebar-section { margin-bottom: 20px; }
+        .sidebar-section h3 {
+            font-size: 10px; text-transform: uppercase;
+            letter-spacing: 1.5px; color: #64748b;
+            margin-bottom: 10px; padding-left: 8px;
+        }
+        .sidebar a {
+            display: flex; align-items: center; gap: 10px;
+            padding: 10px 12px; border-radius: 8px;
+            color: #cbd5e1; text-decoration: none;
+            font-size: 13px; font-weight: 500;
+            transition: all 0.2s; margin-bottom: 2px;
+        }
+        .sidebar a:hover { background: #1e293b; color: white; }
+        .sidebar a.active { background: #1e293b; color: white; border-left: 3px solid #4f46e5; }
+        .sidebar a .icon { font-size: 16px; width: 20px; text-align: center; }
+        .sidebar a .badge-count {
+            margin-left: auto;
+            background: #4f46e5; padding: 2px 8px;
+            border-radius: 10px; font-size: 10px; font-weight: 700;
+        }
+        .sidebar-footer {
+            margin-top: auto; padding-top: 16px;
+            border-top: 1px solid #1e293b;
+        }
+        .sidebar-footer a { color: #94a3b8; font-size: 12px; }
+
+        .main-content {
+            margin-left: 260px; padding: 24px; flex: 1;
+        }
+        .top-bar {
+            display: flex; justify-content: space-between;
+            align-items: center; margin-bottom: 24px;
+        }
+        .top-bar h1 { font-size: 24px; font-weight: 800; }
+        .top-bar .breadcrumb { font-size: 13px; color: #64748b; }
+        .top-bar .breadcrumb a { color: #4f46e5; text-decoration: none; }
+        .user-info {
+            display: flex; align-items: center; gap: 10px;
+            background: white; padding: 8px 16px;
+            border-radius: 30px; box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        .user-avatar {
+            width: 36px; height: 36px; background: #c7d2fe;
+            border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; font-weight: 700;
+            color: #3730a3; font-size: 14px;
+        }
+        .user-name { font-weight: 600; font-size: 14px; }
+        .user-role { font-size: 11px; color: #64748b; }
+
+        .toolbar {
+            display: flex; justify-content: space-between;
+            align-items: center; margin-bottom: 20px;
+            flex-wrap: wrap; gap: 12px;
+        }
+        .btn {
+            padding: 10px 18px; border-radius: 8px;
+            font-size: 13px; font-weight: 600; cursor: pointer;
+            border: none; transition: all 0.2s;
+            text-decoration: none; display: inline-block;
+        }
+        .btn-primary { background: #4f46e5; color: white; }
+        .btn-primary:hover { background: #4338ca; }
+        .btn-outline { background: white; color: #4f46e5; border: 1px solid #4f46e5; }
+        .btn-outline:hover { background: #eef2ff; }
+        .btn-danger { background: #ef4444; color: white; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-success { background: #10b981; color: white; }
+        .btn-success:hover { background: #059669; }
+        .btn-sm { padding: 5px 12px; font-size: 11px; border-radius: 6px; }
+        .btn-warning { background: #f59e0b; color: white; }
+        .btn-warning:hover { background: #d97706; }
+
+        .filter-group {
+            display: flex; gap: 10px; align-items: center; flex-wrap: wrap;
+        }
+        .filter-group select, .filter-group input {
+            padding: 8px 14px; border-radius: 8px;
+            border: 1px solid #e2e8f0; background: white;
+            font-size: 13px; font-family: inherit;
+        }
+        .filter-group select:focus, .filter-group input:focus {
+            outline: none; border-color: #4f46e5;
+        }
+
+        .stats-row {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background: white; padding: 16px; border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        .stat-icon {
+            width: 38px; height: 38px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 18px; margin-bottom: 10px;
+        }
+        .stat-icon.blue { background: #eef2ff; color: #4f46e5; }
+        .stat-icon.green { background: #ecfdf5; color: #10b981; }
+        .stat-icon.orange { background: #fff7ed; color: #f97316; }
+        .stat-icon.red { background: #fef2f2; color: #ef4444; }
+        .stat-value { font-size: 24px; font-weight: 800; }
+        .stat-label { font-size: 11px; color: #64748b; margin-top: 2px; }
+
+        .panel {
+            background: white; border-radius: 12px;
+            padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+        .panel-header {
+            display: flex; justify-content: space-between;
+            align-items: center; margin-bottom: 16px;
+        }
+        .panel-header h2 { font-size: 16px; font-weight: 700; }
+        .count-info { font-size: 13px; color: #64748b; }
+
+        .table-responsive { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; }
+        th {
+            text-align: left; padding: 12px 14px;
+            font-size: 11px; font-weight: 600; color: #64748b;
+            text-transform: uppercase; letter-spacing: 0.5px;
+            border-bottom: 2px solid #e2e8f0; background: #f8fafc;
+        }
+        td {
+            padding: 12px 14px; font-size: 13px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        tr:hover { background: #f8fafc; }
+        .badge {
+            padding: 4px 10px; border-radius: 20px;
+            font-size: 11px; font-weight: 600;
+        }
+        .badge.success { background: #ecfdf5; color: #059669; }
+        .badge.danger { background: #fef2f2; color: #dc2626; }
+        .badge.warning { background: #fefce8; color: #ca8a04; }
+        .actions { display: flex; gap: 6px; }
+
+        .pagination {
+            display: flex; justify-content: center; align-items: center;
+            gap: 8px; margin-top: 20px;
+        }
+        .pagination button {
+            padding: 8px 14px; border-radius: 8px;
+            border: 1px solid #e2e8f0; background: white;
+            cursor: pointer; font-size: 13px; font-weight: 600;
+            transition: all 0.2s;
+        }
+        .pagination button:hover { background: #eef2ff; border-color: #4f46e5; }
+        .pagination button.active {
+            background: #4f46e5; color: white; border-color: #4f46e5;
+        }
+        .pagination .page-info { font-size: 13px; color: #64748b; }
+
+        .modal-overlay {
+            display: none;
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 999;
+            align-items: center; justify-content: center;
+        }
+        .modal-overlay.show { display: flex; }
+        .modal {
+            background: white; border-radius: 16px;
+            padding: 30px; width: 90%; max-width: 650px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-height: 90vh; overflow-y: auto;
+        }
+        .modal h3 { font-size: 18px; margin-bottom: 20px; }
+        .modal .form-row {
+            display: grid; grid-template-columns: 1fr 1fr;
+            gap: 14px;
+        }
+        .modal .form-group { margin-bottom: 14px; }
+        .modal .form-group label {
+            display: block; font-size: 13px; font-weight: 600;
+            margin-bottom: 4px; color: #475569;
+        }
+        .modal .form-group input, .modal .form-group select {
+            width: 100%; padding: 10px 14px;
+            border-radius: 8px; border: 1px solid #e2e8f0;
+            font-size: 13px; font-family: inherit;
+        }
+        .modal .form-group input:focus, .modal .form-group select:focus {
+            outline: none; border-color: #4f46e5;
+        }
+        .modal-actions {
+            display: flex; gap: 10px; justify-content: flex-end;
+            margin-top: 20px;
+        }
+
+        .demo-label {
+            display: inline-block;
+            background: #fbbf24; color: #000;
+            padding: 3px 10px; border-radius: 12px;
+            font-size: 10px; font-weight: 700;
+            margin-left: 8px;
+        }
+        .text-muted { color: #64748b; font-size: 12px; }
+        .import-zone {
+            border: 2px dashed #e2e8f0;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            margin: 16px 0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .import-zone:hover {
+            border-color: #4f46e5;
+            background: #eef2ff;
+        }
+        .import-zone .icon { font-size: 40px; margin-bottom: 8px; }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 200px; }
+            .main-content { margin-left: 200px; }
+            .stats-row { grid-template-columns: repeat(2, 1fr); }
+            .toolbar { flex-direction: column; align-items: flex-start; }
+            .filter-group { width: 100%; }
+            .modal .form-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ========== SIDEBAR ========== -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-icon">E</div>
+            <div>
+                <h2>EXALAB</h2>
+                <span>Super Admin Panel</span>
+            </div>
+        </div>
+
+        <div class="sidebar-section">
+            <h3>Menu Utama</h3>
+            <a href="dashboard.html">
+                <span class="icon">📊</span> Dashboard
+            </a>
+            <a href="manajemen-admin.html">
+                <span class="icon">👥</span> Manajemen Admin
+            </a>
+            <a href="manajemen-guru.html">
+                <span class="icon">👨‍🏫</span> Manajemen Guru
+                <span class="badge-count">83</span>
+            </a>
+            <a href="manajemen-siswa.html" class="active">
+                <span class="icon">🎓</span> Manajemen Siswa
+                <span class="badge-count">1.050</span>
+            </a>
+        </div>
+
+        <div class="sidebar-section">
+            <h3>Akademik</h3>
+            <a href="bank-soal-sekolah.html">
+                <span class="icon">📁</span> Bank Soal Sekolah
+            </a>
+            <a href="laporan-gabungan.html">
+                <span class="icon">📈</span> Laporan Gabungan
+            </a>
+            <a href="audit-log.html">
+                <span class="icon">📋</span> Audit Log
+            </a>
+            <a href="pengaturan-server.html">
+                <span class="icon">⚙️</span> Pengaturan Server
+            </a>
+        </div>
+
+        <div class="sidebar-footer">
+            <a href="../umum/login.html">🚪 Logout</a>
+            <br>
+            <a href="../index.html" style="font-size:10px;">← Kembali ke Home</a>
+        </div>
+    </aside>
+
+    <!-- ========== MAIN CONTENT ========== -->
+    <main class="main-content">
+        <div class="top-bar">
+            <div>
+                <h1>🎓 Manajemen Siswa <span class="demo-label">DEMO</span></h1>
+                <p class="breadcrumb">
+                    <a href="dashboard.html">Dashboard</a> / Manajemen Siswa
+                </p>
+            </div>
+            <div class="user-info">
+                <div class="user-avatar">KS</div>
+                <div>
+                    <div class="user-name">Dr. H. Ahmad Fauzi, M.Pd.</div>
+                    <div class="user-role">Super Admin</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-icon blue">👥</div>
+                <div class="stat-value">1.050</div>
+                <div class="stat-label">Total Siswa</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green">✅</div>
+                <div class="stat-value">1.032</div>
+                <div class="stat-label">Akun Aktif</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon orange">🆕</div>
+                <div class="stat-value">18</div>
+                <div class="stat-label">Siswa Baru (Belum Login)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon red">🚫</div>
+                <div class="stat-value">0</div>
+                <div class="stat-label">Diblokir</div>
+            </div>
+        </div>
+
+        <!-- TOOLBAR -->
+        <div class="toolbar">
+            <div style="display:flex;gap:8px;">
+                <button class="btn btn-primary" onclick="openModalTambah()">➕ Tambah Siswa</button>
+                <button class="btn btn-outline" onclick="openModalImpor()">📥 Impor Excel</button>
+                <button class="btn btn-outline">📤 Ekspor Data</button>
+                <button class="btn btn-warning">🔄 Reset Password Massal</button>
+            </div>
+            <div class="filter-group">
+                <select>
+                    <option value="">Semua Jenjang</option>
+                    <option value="sd">SD</option>
+                    <option value="smp">SMP</option>
+                    <option value="sma">SMA</option>
+                </select>
+                <select>
+                    <option value="">Semua Kelas</option>
+                    <option value="1">Kelas 1</option>
+                    <option value="2">Kelas 2</option>
+                    <option value="3">Kelas 3</option>
+                    <option value="4">Kelas 4</option>
+                    <option value="5">Kelas 5</option>
+                    <option value="6">Kelas 6</option>
+                    <option value="7">Kelas 7</option>
+                    <option value="8">Kelas 8</option>
+                    <option value="9">Kelas 9</option>
+                    <option value="10">Kelas 10</option>
+                    <option value="11">Kelas 11</option>
+                    <option value="12">Kelas 12</option>
+                </select>
+                <select>
+                    <option value="">Semua Rombel</option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                </select>
+                <input type="text" placeholder="🔍 Cari NISN atau nama...">
+            </div>
+        </div>
+
+        <!-- TABEL SISWA -->
+        <div class="panel">
+            <div class="panel-header">
+                <h2>📋 Daftar Siswa</h2>
+                <span class="count-info">Menampilkan 10 dari 1.050 siswa | Halaman 1 dari 105</span>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>NISN</th>
+                            <th>Nama Lengkap</th>
+                            <th>Jenjang</th>
+                            <th>Kelas</th>
+                            <th>Rombel</th>
+                            <th>Status</th>
+                            <th>Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>0071234567</td>
+                            <td><strong>Ahmad Fauzi</strong></td>
+                            <td>🟡 SMP</td>
+                            <td>7</td>
+                            <td>A</td>
+                            <td><span class="badge success">Aktif</span></td>
+                            <td>
+                                <div class="actions">
+                                    <button class="btn btn-outline btn-sm">Edit</button>
+                                    <button class="btn btn-outline btn-sm">Reset</button>
+                                    <button class="btn btn-danger btn-sm">Blokir</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>0077654321</td>
+                            <td><strong>Siti Nurhaliza</strong></td>
+                            <td>🟡 SMP</td>
+                            <td>7</td>
+                            <td>A</td>
+                            <td><span class="badge success">Aktif</span></td>
+                            <td>
+                                <div class="actions">
+                                    <button class="btn btn-outline btn-sm">Edit</button>
+                                    <button class="btn btn-outline btn-sm">Reset</button>
+                                    <button class="btn btn-danger btn-sm">Blokir</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>0081122334</td>
+                            <td><strong>Budi Santoso</strong></td>
+                            <td>🟢 SD</td>
+                            <td>4</td>
+                            <td>B</td>
+                            <td><span class="badge success">Aktif</span></td>
+                            <td>
+                                <div class="actions">
+                                    <button class="btn btn-outline btn-sm">Edit</button>
+                                    <button class="btn btn-outline btn-sm">Reset</button>
+                                    <button class="btn btn-danger btn-sm">Blokir</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>0099988776</td>
+                            <td><strong>Citra Dewi</strong></td>
+                            <td>🔵 SMA</td>
+                            <td>11</td>
+                            <td>IPA 1</td>
+                            <td><span class="badge success">Aktif</span></td>
+                            <td>
+                                <div class="actions">
+                                    <button class="btn btn-outline btn-sm">Edit</button>
+                                    <button class="btn btn-outline btn-sm">Reset</button>
+                                    <button class="btn btn-danger btn-sm">Blokir</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>0073344556</td>
+                            <td><strong>Doni Prasetyo</strong></td>
+                            <td>🟡 SMP</td>
+                            <td>8</td>
+                            <td>B</td>
+                            <td><span class="badge warning">Belum Login</span></td>
+                            <td>
+                                <div class="actions">
+                                    <button class="btn btn-outline btn-sm">Edit</button>
+                                    <button class="btn btn-outline btn-sm">Reset</button>
+                                    <button class="btn btn-danger btn-sm">Blokir</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>0067788990</td>
+                            <td><strong>Eka Rahmawati</strong></td>
+                            <td>🟢 SD</td>
+                            <td>6</td>
+                            <td>A</td>
+                            <td><span class="badge success">Aktif</span></td>
+                            <td>
+                                <div class="actions">
+                                    <button class="btn btn-outline btn-sm">Edit</button>
+                                    <button class="btn btn-outline btn-sm">Reset</button>
+                                    <button class="btn btn-danger btn-sm">Blokir</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>0056677889</td>
+                            <td><strong>Fajar Hidayat</strong></td>
+                            <td>🔵 SMA</td>
+                            <td>10</td>
+                            <td>IPS 2</td>
+                            <td><span class="badge success">Aktif</span></td>
+                            <td>
+                                <div class="actions">
+                                    <button class="btn btn-outline btn-sm">Edit</button>
+                                    <button class="btn btn-outline btn-sm">Reset</button>
+                                    <button class="btn btn-danger btn-sm">Blokir</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>0089900112</td>
+                            <td><strong>Gita Permata</strong></td>
+                            <td>🟢 SD</td>
+                            <td>2</td>
+                            <td>A</td>
+                            <td><span class="badge success">Aktif</span></td>
+                            <td>
+                                <div class="actions">
+                                    <button class="btn btn-outline btn-sm">Edit</button>
+                                    <button class="btn btn-outline btn-sm">Reset</button>
+                                    <button class="btn btn-danger btn-sm">Blokir</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>0075566778</td>
+                            <td><strong>Hendra Gunawan</strong></td>
+                            <td>🟡 SMP</td>
+                            <td>9</td>
+                            <td>C</td>
+                            <td><span class="badge success">Aktif</span></td>
+                            <td>
+                                <div class="actions">
+                                    <button class="btn btn-outline btn-sm">Edit</button>
+                                    <button class="btn btn-outline btn-sm">Reset</button>
+                                    <button class="btn btn-danger btn-sm">Blokir</button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>0061122334</td>
+                            <td><strong>Indah Sari</strong></td>
+                            <td>🔵 SMA</td>
+                            <td>12</td>
+                            <td>IPA 3</td>
+                            <td><span class="badge success">Aktif</span></td>
+                            <td>
+                                <div class="actions">
+                                    <button class="btn btn-outline btn-sm">Edit</button>
+                                    <button class="btn btn-outline btn-sm">Reset</button>
+                                    <button class="btn btn-danger btn-sm">Blokir</button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- PAGINATION -->
+            <div class="pagination">
+                <button disabled>← Sebelumnya</button>
+                <button class="active">1</button>
+                <button>2</button>
+                <button>3</button>
+                <button>...</button>
+                <button>105</button>
+                <button>Selanjutnya →</button>
+                <span class="page-info">1.050 siswa</span>
+            </div>
+        </div>
+    </main>
+
+    <!-- ========== MODAL TAMBAH SISWA ========== -->
+    <div class="modal-overlay" id="modalTambah">
+        <div class="modal">
+            <h3>➕ Tambah Siswa Baru</h3>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>NISN</label>
+                    <input type="text" placeholder="Nomor Induk Siswa Nasional">
+                </div>
+                <div class="form-group">
+                    <label>Nama Lengkap</label>
+                    <input type="text" placeholder="Nama lengkap siswa">
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Jenjang</label>
+                    <select>
+                        <option value="">Pilih Jenjang</option>
+                        <option value="sd">SD</option>
+                        <option value="smp">SMP</option>
+                        <option value="sma">SMA</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Kelas</label>
+                    <select>
+                        <option value="">Pilih Kelas</option>
+                        <option value="1">1</option><option value="2">2</option>
+                        <option value="3">3</option><option value="4">4</option>
+                        <option value="5">5</option><option value="6">6</option>
+                        <option value="7">7</option><option value="8">8</option>
+                        <option value="9">9</option><option value="10">10</option>
+                        <option value="11">11</option><option value="12">12</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Rombel</label>
+                    <select>
+                        <option value="">Pilih Rombel</option>
+                        <option value="A">A</option>
+                        <option value="B">B</option>
+                        <option value="C">C</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Password Default</label>
+                    <input type="text" value="Otomatis = NISN" readonly>
+                    <small class="text-muted">Siswa wajib ganti password saat login pertama</small>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closeModalTambah()">Batal</button>
+                <button class="btn btn-primary" onclick="closeModalTambah(); alert('✅ Siswa berhasil ditambahkan! (Demo)')">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== MODAL IMPOR EXCEL ========== -->
+    <div class="modal-overlay" id="modalImpor">
+        <div class="modal">
+            <h3>📥 Impor Data Siswa dari Excel</h3>
+            <p class="text-muted">Download template, isi data siswa, lalu upload kembali.</p>
+            <div style="margin:16px 0;">
+                <button class="btn btn-outline">📥 Download Template Excel</button>
+            </div>
+            <div class="import-zone" onclick="alert('🔶 Demo: Pilih file .xlsx (Simulasi)')">
+                <div class="icon">📂</div>
+                <p style="font-weight:600;">Klik untuk memilih file</p>
+                <p class="text-muted">Format: .xlsx, .csv (Maks 5MB)</p>
+            </div>
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closeModalImpor()">Batal</button>
+                <button class="btn btn-primary" onclick="closeModalImpor(); alert('✅ 150 siswa berhasil diimpor! (Demo)')">Impor</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function openModalTambah() {
+            document.getElementById('modalTambah').classList.add('show');
+        }
+        function closeModalTambah() {
+            document.getElementById('modalTambah').classList.remove('show');
+        }
+        function openModalImpor() {
+            document.getElementById('modalImpor').classList.add('show');
+        }
+        function closeModalImpor() {
+            document.getElementById('modalImpor').classList.remove('show');
+        }
+        // Tutup modal saat klik di luar
+        document.querySelectorAll('.modal-overlay').forEach(overlay => {
+            overlay.addEventListener('click', function(e) {
+                if (e.target === this) this.classList.remove('show');
+            });
+        });
+    </script>
+
+</body>
+</html>

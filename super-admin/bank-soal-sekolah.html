@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EXALAB - Bank Soal Sekolah</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f1f5f9; color: #1e293b; display: flex; min-height: 100vh; }
+        .sidebar { width: 260px; background: #0f172a; color: white; padding: 20px; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; overflow-y: auto; }
+        .sidebar-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #1e293b; }
+        .sidebar-logo .logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg, #4f46e5, #7c3aed); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; }
+        .sidebar-logo h2 { font-size: 18px; font-weight: 700; }
+        .sidebar-logo span { font-size: 11px; color: #fbbf24; display: block; }
+        .sidebar-section { margin-bottom: 20px; }
+        .sidebar-section h3 { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: #64748b; margin-bottom: 10px; padding-left: 8px; }
+        .sidebar a { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; color: #cbd5e1; text-decoration: none; font-size: 13px; font-weight: 500; transition: all 0.2s; margin-bottom: 2px; }
+        .sidebar a:hover { background: #1e293b; color: white; }
+        .sidebar a.active { background: #1e293b; color: white; border-left: 3px solid #4f46e5; }
+        .sidebar a .icon { font-size: 16px; width: 20px; text-align: center; }
+        .sidebar-footer { margin-top: auto; padding-top: 16px; border-top: 1px solid #1e293b; }
+        .sidebar-footer a { color: #94a3b8; font-size: 12px; }
+
+        .main-content { margin-left: 260px; padding: 24px; flex: 1; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .top-bar h1 { font-size: 24px; font-weight: 800; }
+        .breadcrumb { font-size: 13px; color: #64748b; }
+        .breadcrumb a { color: #4f46e5; text-decoration: none; }
+        .user-info { display: flex; align-items: center; gap: 10px; background: white; padding: 8px 16px; border-radius: 30px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+        .user-avatar { width: 36px; height: 36px; background: #c7d2fe; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #3730a3; font-size: 14px; }
+        .user-name { font-weight: 600; font-size: 14px; }
+        .user-role { font-size: 11px; color: #64748b; }
+
+        .btn { padding: 10px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; transition: all 0.2s; }
+        .btn-outline { background: white; color: #4f46e5; border: 1px solid #4f46e5; }
+
+        .panel { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); margin-bottom: 20px; }
+        .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .panel-header h2 { font-size: 16px; font-weight: 700; }
+
+        .folder-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 14px; }
+        .folder-card { background: #f8fafc; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.2s; border: 2px solid transparent; text-decoration: none; color: #1e293b; display: block; }
+        .folder-card:hover { border-color: #4f46e5; background: #eef2ff; transform: translateY(-2px); }
+        .folder-icon { font-size: 36px; margin-bottom: 8px; }
+        .folder-name { font-weight: 700; font-size: 13px; margin-bottom: 2px; }
+        .folder-count { font-size: 11px; color: #64748b; }
+
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 10px; font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; border-bottom: 2px solid #e2e8f0; background: #f8fafc; }
+        td { padding: 10px; font-size: 13px; border-bottom: 1px solid #f1f5f9; }
+        .badge { padding: 3px 8px; border-radius: 20px; font-size: 10px; font-weight: 600; }
+        .badge.pg { background: #eef2ff; color: #4f46e5; }
+        .badge.esai { background: #ecfdf5; color: #059669; }
+        .badge.bs { background: #fefce8; color: #ca8a04; }
+
+        .filter-group { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+        .filter-group select, .filter-group input { padding: 8px 12px; border-radius: 8px; border: 1px solid #e2e8f0; font-size: 13px; }
+
+        .demo-label { display: inline-block; background: #fbbf24; color: #000; padding: 3px 10px; border-radius: 12px; font-size: 10px; font-weight: 700; margin-left: 8px; }
+
+        @media (max-width: 768px) { .sidebar { width: 200px; } .main-content { margin-left: 200px; } .folder-grid { grid-template-columns: repeat(2, 1fr); } }
+    </style>
+</head>
+<body>
+
+<aside class="sidebar">
+    <div class="sidebar-logo"><div class="logo-icon">E</div><div><h2>EXALAB</h2><span>Super Admin Panel</span></div></div>
+    <div class="sidebar-section">
+        <h3>Menu Utama</h3>
+        <a href="dashboard.html"><span class="icon">📊</span> Dashboard</a>
+        <a href="manajemen-admin.html"><span class="icon">👥</span> Manajemen Admin</a>
+        <a href="manajemen-guru.html"><span class="icon">👨‍🏫</span> Manajemen Guru</a>
+        <a href="manajemen-siswa.html"><span class="icon">🎓</span> Manajemen Siswa</a>
+    </div>
+    <div class="sidebar-section">
+        <h3>Akademik</h3>
+        <a href="bank-soal-sekolah.html" class="active"><span class="icon">📁</span> Bank Soal Sekolah</a>
+        <a href="laporan-gabungan.html"><span class="icon">📈</span> Laporan Gabungan</a>
+        <a href="audit-log.html"><span class="icon">📋</span> Audit Log</a>
+        <a href="pengaturan-server.html"><span class="icon">⚙️</span> Pengaturan Server</a>
+    </div>
+    <div class="sidebar-footer"><a href="../login.html">🚪 Logout</a><br><a href="../index.html" style="font-size:10px;">← Kembali ke Home</a></div>
+</aside>
+
+<main class="main-content">
+    <div class="top-bar">
+        <div><h1>📁 Bank Soal Sekolah <span class="demo-label">DEMO</span></h1><p class="breadcrumb"><a href="dashboard.html">Dashboard</a> / Bank Soal Sekolah</p></div>
+        <div class="user-info"><div class="user-avatar">KS</div><div><div class="user-name">Dr. H. Ahmad Fauzi, M.Pd.</div><div class="user-role">Super Admin</div></div></div>
+    </div>
+
+    <div class="filter-group">
+        <select><option>Semua Jenjang</option><option>SD</option><option>SMP</option><option>SMA</option></select>
+        <select><option>Semua Mapel</option><option>IPA</option><option>Matematika</option><option>B. Indonesia</option></select>
+        <input type="text" placeholder="🔍 Cari soal...">
+        <button class="btn btn-outline">📥 Ekspor</button>
+    </div>
+
+    <div class="panel">
+        <div class="panel-header"><h2>📂 Folder Bank Soal Sekolah</h2><span style="font-size:13px;color:#64748b;">Total: 9.800 soal</span></div>
+        <div class="folder-grid">
+            <div class="folder-card" onclick="alert('🔶 Demo: Buka folder SD - IPA (350 soal)')"><div class="folder-icon">📁</div><div class="folder-name">🟢 SD - IPA</div><div class="folder-count">350 soal</div></div>
+            <div class="folder-card" onclick="alert('🔶 Demo: Buka folder SD - Matematika (420 soal)')"><div class="folder-icon">📁</div><div class="folder-name">🟢 SD - Matematika</div><div class="folder-count">420 soal</div></div>
+            <div class="folder-card" onclick="alert('🔶 Demo: Buka folder SD - B. Indonesia (380 soal)')"><div class="folder-icon">📁</div><div class="folder-name">🟢 SD - B. Indonesia</div><div class="folder-count">380 soal</div></div>
+            <div class="folder-card" onclick="alert('🔶 Demo: Buka folder SMP - IPA (520 soal)')"><div class="folder-icon">📁</div><div class="folder-name">🟡 SMP - IPA</div><div class="folder-count">520 soal</div></div>
+            <div class="folder-card" onclick="alert('🔶 Demo: Buka folder SMP - Matematika (480 soal)')"><div class="folder-icon">📁</div><div class="folder-name">🟡 SMP - Matematika</div><div class="folder-count">480 soal</div></div>
+            <div class="folder-card" onclick="alert('🔶 Demo: Buka folder SMA - Biologi (410 soal)')"><div class="folder-icon">📁</div><div class="folder-name">🔵 SMA - Biologi</div><div class="folder-count">410 soal</div></div>
+            <div class="folder-card" onclick="alert('🔶 Demo: Buka folder SMA - Fisika (380 soal)')"><div class="folder-icon">📁</div><div class="folder-name">🔵 SMA - Fisika</div><div class="folder-count">380 soal</div></div>
+            <div class="folder-card" onclick="alert('🔶 Demo: Buka folder Ujian Akhir Semester')"><div class="folder-icon">📝</div><div class="folder-name">Ujian Akhir Semester</div><div class="folder-count">1.200 soal</div></div>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="panel-header"><h2>📋 Soal Terbaru</h2></div>
+        <table>
+            <thead><tr><th>ID</th><th>Pertanyaan</th><th>Tipe</th><th>Mapel</th><th>Jenjang</th><th>Pembuat</th></tr></thead>
+            <tbody>
+                <tr><td>#1245</td><td>Berapakah hasil dari 8 × 7 + 12 ÷ 4?</td><td><span class="badge pg">PG</span></td><td>Matematika</td><td>🟡 SMP</td><td>Ani Lestari</td></tr>
+                <tr><td>#1244</td><td>Sebutkan 3 contoh perubahan fisika!</td><td><span class="badge esai">Esai</span></td><td>IPA</td><td>🟡 SMP</td><td>Ani Lestari</td></tr>
+                <tr><td>#1243</td><td>Air mendidih pada suhu 100°C.</td><td><span class="badge bs">B/S</span></td><td>IPA</td><td>🟢 SD</td><td>Budi Santoso</td></tr>
+                <tr><td>#1242</td><td>Jelaskan proses fotosintesis!</td><td><span class="badge esai">Esai</span></td><td>Biologi</td><td>🔵 SMA</td><td>Citra Dewi</td></tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+</body>
+</html>

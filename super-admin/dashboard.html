@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EXALAB - Dashboard Super Admin</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f1f5f9; color: #1e293b; display: flex; min-height: 100vh; }
+
+        .sidebar { width: 260px; background: #0f172a; color: white; padding: 20px; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; z-index: 100; overflow-y: auto; }
+        .sidebar-logo { display: flex; align-items: center; gap: 12px; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid #1e293b; }
+        .sidebar-logo .logo-icon { width: 40px; height: 40px; background: linear-gradient(135deg, #4f46e5, #7c3aed); border-radius: 12px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 18px; }
+        .sidebar-logo h2 { font-size: 18px; font-weight: 700; }
+        .sidebar-logo span { font-size: 11px; color: #fbbf24; display: block; }
+        .sidebar-section { margin-bottom: 20px; }
+        .sidebar-section h3 { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: #64748b; margin-bottom: 10px; padding-left: 8px; }
+        .sidebar a { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 8px; color: #cbd5e1; text-decoration: none; font-size: 13px; font-weight: 500; transition: all 0.2s; margin-bottom: 2px; }
+        .sidebar a:hover { background: #1e293b; color: white; }
+        .sidebar a.active { background: #1e293b; color: white; border-left: 3px solid #4f46e5; }
+        .sidebar a .icon { font-size: 16px; width: 20px; text-align: center; }
+        .sidebar-footer { margin-top: auto; padding-top: 16px; border-top: 1px solid #1e293b; }
+        .sidebar-footer a { color: #94a3b8; font-size: 12px; display: block; padding: 6px 0; }
+        .sidebar-footer a:hover { color: #fbbf24; }
+
+        .main-content { margin-left: 260px; padding: 24px; flex: 1; }
+        .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .top-bar h1 { font-size: 24px; font-weight: 800; }
+        .user-info { display: flex; align-items: center; gap: 10px; background: white; padding: 8px 16px; border-radius: 30px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+        .user-avatar { width: 36px; height: 36px; background: #c7d2fe; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: #3730a3; font-size: 14px; }
+        .user-name { font-weight: 600; font-size: 14px; }
+        .user-role { font-size: 11px; color: #64748b; }
+
+        .jenjang-selector { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+        .jenjang-tab { flex: 1; min-width: 120px; padding: 14px 16px; border-radius: 10px; border: 2px solid #e2e8f0; background: white; cursor: pointer; text-align: center; font-weight: 600; font-size: 14px; transition: all 0.2s; color: #64748b; }
+        .jenjang-tab:hover { border-color: #a5b4fc; color: #4f46e5; }
+        .jenjang-tab.active { background: #4f46e5; color: white; border-color: #4f46e5; }
+        .jenjang-tab .count { font-size: 22px; font-weight: 800; display: block; }
+        .jenjang-tab .label { font-size: 12px; font-weight: 500; opacity: 0.85; }
+
+        .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px; }
+        .stat-card { background: white; padding: 20px; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+        .stat-icon { width: 38px; height: 38px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 18px; margin-bottom: 10px; }
+        .stat-icon.blue { background: #eef2ff; color: #4f46e5; }
+        .stat-icon.green { background: #ecfdf5; color: #10b981; }
+        .stat-icon.orange { background: #fff7ed; color: #f97316; }
+        .stat-icon.purple { background: #faf5ff; color: #8b5cf6; }
+        .stat-value { font-size: 26px; font-weight: 800; }
+        .stat-label { font-size: 12px; color: #64748b; margin-top: 2px; }
+
+        .main-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .panel { background: white; border-radius: 12px; padding: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+        .panel-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .panel-header h2 { font-size: 15px; font-weight: 700; }
+        .panel-header a { font-size: 12px; color: #4f46e5; text-decoration: none; font-weight: 600; }
+
+        table { width: 100%; border-collapse: collapse; }
+        th { text-align: left; padding: 8px 10px; font-size: 11px; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #e2e8f0; }
+        td { padding: 10px; font-size: 13px; border-bottom: 1px solid #f1f5f9; }
+        .badge { padding: 3px 10px; border-radius: 20px; font-size: 10px; font-weight: 600; }
+        .badge.aktif { background: #ecfdf5; color: #059669; }
+        .badge.selesai { background: #f1f5f9; color: #64748b; }
+        .badge.draft { background: #fefce8; color: #ca8a04; }
+
+        .kelas-list { display: flex; flex-direction: column; gap: 10px; }
+        .kelas-item { display: flex; align-items: center; gap: 10px; }
+        .kelas-item .nama-kelas { width: 50px; font-weight: 700; font-size: 13px; color: #4f46e5; }
+        .kelas-item .bar-container { flex: 1; height: 18px; background: #f1f5f9; border-radius: 9px; overflow: hidden; }
+        .kelas-item .bar { height: 100%; border-radius: 9px; background: #4f46e5; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; font-size: 10px; font-weight: 700; color: white; }
+        .kelas-item .nilai { width: 40px; font-weight: 700; font-size: 13px; text-align: right; }
+
+        .demo-label { display: inline-block; background: #fbbf24; color: #000; padding: 3px 10px; border-radius: 12px; font-size: 10px; font-weight: 700; margin-left: 8px; }
+
+        @media (max-width: 768px) { .sidebar { width: 200px; } .main-content { margin-left: 200px; } .stats-row { grid-template-columns: repeat(2, 1fr); } .main-grid { grid-template-columns: 1fr; } }
+    </style>
+</head>
+<body>
+
+    <!-- ========== SIDEBAR ========== -->
+    <aside class="sidebar">
+        <div class="sidebar-logo">
+            <div class="logo-icon">E</div>
+            <div>
+                <h2>EXALAB</h2>
+                <span>Super Admin Panel</span>
+            </div>
+        </div>
+
+        <div class="sidebar-section">
+            <h3>Menu Utama</h3>
+            <a href="dashboard.html" class="active">
+                <span class="icon">📊</span> Dashboard
+            </a>
+            <a href="manajemen-admin.html">
+                <span class="icon">👥</span> Manajemen Admin
+            </a>
+            <a href="manajemen-guru.html">
+                <span class="icon">👨‍🏫</span> Manajemen Guru
+            </a>
+            <a href="manajemen-siswa.html">
+                <span class="icon">🎓</span> Manajemen Siswa
+            </a>
+        </div>
+
+        <div class="sidebar-section">
+            <h3>Akademik</h3>
+            <a href="bank-soal-sekolah.html">
+                <span class="icon">📁</span> Bank Soal Sekolah
+            </a>
+            <a href="laporan-gabungan.html">
+                <span class="icon">📈</span> Laporan Gabungan
+            </a>
+            <a href="audit-log.html">
+                <span class="icon">📋</span> Audit Log
+            </a>
+            <a href="pengaturan-server.html">
+                <span class="icon">⚙️</span> Pengaturan Server
+            </a>
+        </div>
+
+        <div class="sidebar-footer">
+            <a href="../login.html">🚪 Logout</a>
+            <a href="../index.html" style="font-size:10px;">← Kembali ke Home</a>
+        </div>
+    </aside>
+
+    <!-- ========== MAIN CONTENT ========== -->
+    <main class="main-content">
+        <div class="top-bar">
+            <h1>🏫 Dashboard Multi-Jenjang <span class="demo-label">DEMO</span></h1>
+            <div class="user-info">
+                <div class="user-avatar">KS</div>
+                <div>
+                    <div class="user-name">Dr. H. Ahmad Fauzi, M.Pd.</div>
+                    <div class="user-role">Super Admin</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- JENJANG SELECTOR -->
+        <div class="jenjang-selector">
+            <div class="jenjang-tab active" onclick="switchJenjang('all', this)">
+                <span class="count">1.050</span>
+                <span class="label">🏫 Semua Jenjang</span>
+            </div>
+            <div class="jenjang-tab" onclick="switchJenjang('sd', this)">
+                <span class="count">450</span>
+                <span class="label">🟢 SD</span>
+            </div>
+            <div class="jenjang-tab" onclick="switchJenjang('smp', this)">
+                <span class="count">320</span>
+                <span class="label">🟡 SMP</span>
+            </div>
+            <div class="jenjang-tab" onclick="switchJenjang('sma', this)">
+                <span class="count">280</span>
+                <span class="label">🔵 SMA</span>
+            </div>
+        </div>
+
+        <!-- STATS -->
+        <div class="stats-row">
+            <div class="stat-card">
+                <div class="stat-icon blue">👥</div>
+                <div class="stat-value" id="totalSiswa">1.050</div>
+                <div class="stat-label">Total Siswa</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon green">👨‍🏫</div>
+                <div class="stat-value" id="totalGuru">83</div>
+                <div class="stat-label">Total Guru</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon orange">📝</div>
+                <div class="stat-value" id="totalSoal">9.800</div>
+                <div class="stat-label">Total Soal di Bank</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon purple">📋</div>
+                <div class="stat-value" id="totalUjian">157</div>
+                <div class="stat-label">Ujian Selesai</div>
+            </div>
+        </div>
+
+        <!-- MAIN GRID -->
+        <div class="main-grid">
+            <div class="panel">
+                <div class="panel-header">
+                    <h2>📋 Ujian Sedang Berlangsung</h2>
+                    <a href="laporan-gabungan.html">Lihat Semua →</a>
+                </div>
+                <table>
+                    <thead><tr><th>Jenjang</th><th>Ujian</th><th>Kelas</th><th>Peserta</th><th>Status</th></tr></thead>
+                    <tbody id="tabelUjian">
+                        <tr><td>🟡 SMP</td><td>IPA Terpadu</td><td>8A, 8B</td><td>64</td><td><span class="badge aktif">● Aktif</span></td></tr>
+                        <tr><td>🟢 SD</td><td>Matematika</td><td>5A</td><td>32</td><td><span class="badge aktif">● Aktif</span></td></tr>
+                        <tr><td>🔵 SMA</td><td>Biologi</td><td>11 IPA 1</td><td>28</td><td><span class="badge aktif">● Aktif</span></td></tr>
+                        <tr><td>🟡 SMP</td><td>B. Inggris</td><td>9C</td><td>30</td><td><span class="badge draft">◉ Draft</span></td></tr>
+                        <tr><td>🟢 SD</td><td>IPS</td><td>6A, 6B</td><td>58</td><td><span class="badge selesai">● Selesai</span></td></tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="panel">
+                <div class="panel-header">
+                    <h2>📊 Rata-rata Nilai</h2>
+                    <a href="laporan-gabungan.html">Detail →</a>
+                </div>
+                <div class="kelas-list" id="rataNilai">
+                    <div class="kelas-item"><span class="nama-kelas">SMP 9</span><div class="bar-container"><div class="bar" style="width:82%">82</div></div><span class="nilai">82.0</span></div>
+                    <div class="kelas-item"><span class="nama-kelas">SMA 12</span><div class="bar-container"><div class="bar" style="width:80%">80</div></div><span class="nilai">80.0</span></div>
+                    <div class="kelas-item"><span class="nama-kelas">SMP 8</span><div class="bar-container"><div class="bar" style="width:78%">78</div></div><span class="nilai">78.0</span></div>
+                    <div class="kelas-item"><span class="nama-kelas">SD 6</span><div class="bar-container"><div class="bar" style="width:85%">85</div></div><span class="nilai">85.2</span></div>
+                    <div class="kelas-item"><span class="nama-kelas">SD 5</span><div class="bar-container"><div class="bar" style="width:78%">78</div></div><span class="nilai">78.5</span></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        const dataJenjang = {
+            all: {
+                siswa: '1.050', guru: '83', soal: '9.800', ujian: '157',
+                ujianAktif: [
+                    { jenjang: '🟡 SMP', nama: 'IPA Terpadu', kelas: '8A, 8B', peserta: 64, status: 'aktif' },
+                    { jenjang: '🟢 SD', nama: 'Matematika', kelas: '5A', peserta: 32, status: 'aktif' },
+                    { jenjang: '🔵 SMA', nama: 'Biologi', kelas: '11 IPA 1', peserta: 28, status: 'aktif' },
+                    { jenjang: '🟡 SMP', nama: 'B. Inggris', kelas: '9C', peserta: 30, status: 'draft' },
+                    { jenjang: '🟢 SD', nama: 'IPS', kelas: '6A, 6B', peserta: 58, status: 'selesai' },
+                ],
+                rataKelas: [
+                    { kelas: 'SMP 9', nilai: 82, lebar: 82 },
+                    { kelas: 'SMA 12', nilai: 80, lebar: 80 },
+                    { kelas: 'SMP 8', nilai: 78, lebar: 78 },
+                    { kelas: 'SD 6', nilai: 85, lebar: 85 },
+                    { kelas: 'SD 5', nilai: 78, lebar: 78 },
+                ]
+            },
+            sd: {
+                siswa: '450', guru: '25', soal: '2.100', ujian: '45',
+                ujianAktif: [
+                    { jenjang: '🟢 SD', nama: 'Matematika', kelas: '5A', peserta: 32, status: 'aktif' },
+                    { jenjang: '🟢 SD', nama: 'IPS', kelas: '6A, 6B', peserta: 58, status: 'selesai' },
+                ],
+                rataKelas: [
+                    { kelas: 'SD 6', nilai: 85, lebar: 85 },
+                    { kelas: 'SD 5', nilai: 78, lebar: 78 },
+                    { kelas: 'SD 4', nilai: 72, lebar: 72 },
+                ]
+            },
+            smp: {
+                siswa: '320', guru: '30', soal: '3.500', ujian: '60',
+                ujianAktif: [
+                    { jenjang: '🟡 SMP', nama: 'IPA Terpadu', kelas: '8A, 8B', peserta: 64, status: 'aktif' },
+                    { jenjang: '🟡 SMP', nama: 'B. Inggris', kelas: '9C', peserta: 30, status: 'draft' },
+                ],
+                rataKelas: [
+                    { kelas: 'SMP 9', nilai: 82, lebar: 82 },
+                    { kelas: 'SMP 8', nilai: 78, lebar: 78 },
+                    { kelas: 'SMP 7', nilai: 75, lebar: 75 },
+                ]
+            },
+            sma: {
+                siswa: '280', guru: '28', soal: '4.200', ujian: '52',
+                ujianAktif: [
+                    { jenjang: '🔵 SMA', nama: 'Biologi', kelas: '11 IPA 1', peserta: 28, status: 'aktif' },
+                ],
+                rataKelas: [
+                    { kelas: 'SMA 12', nilai: 80, lebar: 80 },
+                    { kelas: 'SMA 11', nilai: 77, lebar: 77 },
+                    { kelas: 'SMA 10', nilai: 73, lebar: 73 },
+                ]
+            }
+        };
+
+        function switchJenjang(jenjang, el) {
+            document.querySelectorAll('.jenjang-tab').forEach(t => t.classList.remove('active'));
+            el.classList.add('active');
+            const d = dataJenjang[jenjang];
+            document.getElementById('totalSiswa').textContent = d.siswa;
+            document.getElementById('totalGuru').textContent = d.guru;
+            document.getElementById('totalSoal').textContent = d.soal;
+            document.getElementById('totalUjian').textContent = d.ujian;
+
+            const tabel = document.getElementById('tabelUjian');
+            tabel.innerHTML = d.ujianAktif.map(u => `
+                <tr>
+                    <td>${u.jenjang}</td><td>${u.nama}</td><td>${u.kelas}</td><td>${u.peserta}</td>
+                    <td><span class="badge ${u.status}">${u.status === 'aktif' ? '● Aktif' : u.status === 'draft' ? '◉ Draft' : '● Selesai'}</span></td>
+                </tr>
+            `).join('');
+
+            const rata = document.getElementById('rataNilai');
+            rata.innerHTML = d.rataKelas.map(k => `
+                <div class="kelas-item">
+                    <span class="nama-kelas">${k.kelas}</span>
+                    <div class="bar-container"><div class="bar" style="width:${k.lebar}%">${k.nilai}</div></div>
+                    <span class="nilai">${k.nilai}.0</span>
+                </div>
+            `).join('');
+        }
+    </script>
+
+</body>
+</html>
