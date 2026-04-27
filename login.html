@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EXALAB - Login</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .login-container {
+            background: #1e293b;
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 420px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+            border: 1px solid #334155;
+        }
+        .login-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .logo-small {
+            width: 56px; height: 56px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            border-radius: 16px;
+            display: flex; align-items: center; justify-content: center;
+            color: white; font-size: 26px; font-weight: 800;
+            margin: 0 auto 14px;
+        }
+        .login-header h1 {
+            color: white;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .login-header p {
+            color: #94a3b8;
+            font-size: 13px;
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        .form-group label {
+            display: block;
+            color: #cbd5e1;
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 10px;
+            border: 1px solid #334155;
+            background: #0f172a;
+            color: white;
+            font-size: 14px;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+        }
+        .form-group select {
+            cursor: pointer;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 14px center;
+        }
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 8px;
+        }
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(79, 70, 229, 0.4);
+        }
+        .demo-info {
+            margin-top: 20px;
+            padding: 14px;
+            background: #0f172a;
+            border-radius: 10px;
+            border: 1px dashed #334155;
+            text-align: center;
+        }
+        .demo-info p {
+            color: #fbbf24;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .demo-info span {
+            color: #94a3b8;
+            font-size: 10px;
+        }
+        .back-link {
+            display: block;
+            text-align: center;
+            margin-top: 16px;
+            color: #64748b;
+            font-size: 12px;
+            text-decoration: none;
+        }
+        .back-link:hover {
+            color: #4f46e5;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="login-header">
+            <div class="logo-small">E</div>
+            <h1>EXALAB</h1>
+            <p>Silakan login untuk melanjutkan</p>
+        </div>
+
+        <!-- FORM LOGIN -->
+        <form onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label for="role">Login Sebagai</label>
+                <select id="role" required>
+                    <option value="">-- Pilih Role --</option>
+                    <option value="super-admin">👑 Super Admin (Kepala Sekolah)</option>
+                    <option value="admin">⚙️ Admin (TU / Admin Lab)</option>
+                    <option value="guru">👨‍🏫 Guru</option>
+                    <option value="siswa">🎓 Siswa</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="username">Username / NIP / NISN</label>
+                <input type="text" id="username" placeholder="Masukkan username" required>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" placeholder="Masukkan password" required>
+            </div>
+
+            <button type="submit" class="btn-login">🔐 MASUK</button>
+        </form>
+
+        <div class="demo-info">
+            <p>🔶 DEMO MODE</p>
+            <span>Klik "MASUK" akan redirect sesuai role yang dipilih.<br>Password bebas, tidak divalidasi.</span>
+        </div>
+
+        <a href="index.html" class="back-link">← Kembali ke halaman utama</a>
+    </div>
+
+    <script>
+        function handleLogin(event) {
+            event.preventDefault();
+            
+            const role = document.getElementById('role').value;
+            const username = document.getElementById('username').value;
+            
+            if (!role) {
+                alert('⚠️ Silakan pilih role terlebih dahulu!');
+                return;
+            }
+            
+            // Redirect berdasarkan role
+            const redirects = {
+                'super-admin': 'super-admin/dashboard.html',
+                'admin': 'admin/dashboard.html',
+                'guru': 'guru/dashboard.html',
+                'siswa': 'siswa/dashboard.html'
+            };
+            
+            // Bisa tambahkan query string untuk nama user
+            window.location.href = redirects[role] + '?user=' + encodeURIComponent(username);
+        }
+    </script>
+</body>
+</html>
